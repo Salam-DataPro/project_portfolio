@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PrimeMart Sales Data Warehouse — SQL Project</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0A2540;
+    --ink-2:#0F3358;
+    --ink-3:#123B63;
+    --line:#8ECAE6;
+    --line-dim:rgba(142,202,230,0.28);
+    --paper:#F5F7FA;
+    --paper-dim:#C9D6E3;
+    --amber:#FFB703;
+    --amber-dim:rgba(255,183,3,0.16);
+    --slate:#9FB3C8;
+    --coral:#FF7A6B;
+    --green:#7BE0B0;
+    --radius:10px;
+    --maxw:1080px;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--ink);
+    color:var(--paper);
+    font-family:'Inter',sans-serif;
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  body::before{
+    content:"";
+    position:fixed; inset:0;
+    background-image:
+      linear-gradient(var(--line-dim) 1px, transparent 1px),
+      linear-gradient(90deg, var(--line-dim) 1px, transparent 1px);
+    background-size:56px 56px;
+    opacity:0.35;
+    pointer-events:none;
+    z-index:0;
+  }
+  .wrap{max-width:var(--maxw); margin:0 auto; padding:0 32px; position:relative; z-index:1;}
+  h1,h2,h3{font-family:'Space Grotesk',sans-serif; font-weight:600; margin:0; letter-spacing:-0.01em;}
+  code, .mono{font-family:'JetBrains Mono',monospace;}
+  a{color:var(--amber);}
+
+  /* NAV */
+  header.nav{
+    position:sticky; top:0; z-index:20;
+    background:rgba(10,37,64,0.86);
+    backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--line-dim);
+  }
+  .nav-inner{max-width:var(--maxw); margin:0 auto; padding:16px 32px; display:flex; align-items:center; justify-content:space-between;}
+  .brand{display:flex; align-items:center; gap:10px; font-family:'Space Grotesk'; font-weight:600; font-size:15px; color:var(--paper);}
+  .brand .dot{width:9px; height:9px; background:var(--amber); border-radius:2px; display:inline-block;}
+  nav.links{display:flex; gap:28px;}
+  nav.links a{color:var(--slate); text-decoration:none; font-size:13px; letter-spacing:0.02em; text-transform:uppercase;}
+  nav.links a:hover{color:var(--amber);}
+  @media (max-width:720px){ nav.links{display:none;} }
+
+  /* HERO */
+  .hero{padding:96px 0 40px;}
+  .eyebrow{
+    display:inline-flex; align-items:center; gap:8px;
+    font-family:'JetBrains Mono'; font-size:12px; letter-spacing:0.08em;
+    color:var(--amber); text-transform:uppercase;
+    border:1px solid rgba(255,183,3,0.35); background:var(--amber-dim);
+    padding:6px 12px; border-radius:100px; margin-bottom:24px;
+  }
+  .hero h1{font-size:clamp(36px,5.4vw,58px); line-height:1.06; max-width:820px;}
+  .hero h1 em{font-style:normal; color:var(--line);}
+  .hero p.sub{max-width:600px; color:var(--paper-dim); font-size:17px; margin-top:20px;}
+  .stat-row{display:flex; gap:14px; flex-wrap:wrap; margin-top:36px;}
+  .stat-chip{
+    border:1px solid var(--line-dim); border-radius:var(--radius);
+    padding:12px 18px; background:var(--ink-2);
+  }
+  .stat-chip .n{font-family:'Space Grotesk'; font-weight:700; font-size:22px; color:var(--paper); display:block;}
+  .stat-chip .l{font-size:12px; color:var(--slate); text-transform:uppercase; letter-spacing:0.04em;}
+
+  /* SCHEMA DIAGRAM */
+  .schema-block{padding:20px 0 90px;}
+  .schema-frame{
+    border:1px solid var(--line-dim); border-radius:16px;
+    background:linear-gradient(180deg, var(--ink-2), var(--ink));
+    padding:8px; overflow:hidden;
+  }
+  .schema-caption{display:flex; justify-content:space-between; align-items:center; padding:14px 20px 0;}
+  .schema-caption .tag{font-family:'JetBrains Mono'; font-size:12px; color:var(--slate); letter-spacing:0.05em;}
+  svg.schema{width:100%; height:auto; display:block;}
+  .tbl-name{font-family:'JetBrains Mono'; font-weight:600; fill:var(--amber); font-size:16px;}
+  .tbl-sub{font-family:'JetBrains Mono'; fill:var(--slate); font-size:11px;}
+  .tbl-rect{fill:var(--ink-2); stroke:var(--line); stroke-width:1.2;}
+  .tbl-rect.fact{fill:var(--ink-3); stroke:var(--amber); stroke-width:1.6;}
+  .rel-line{stroke:var(--line); stroke-width:1.2; stroke-dasharray:4 4; fill:none; opacity:0.75;}
+
+  /* SECTIONS */
+  section{padding:70px 0; border-top:1px solid var(--line-dim);}
+  .section-head{display:flex; align-items:baseline; gap:16px; margin-bottom:36px;}
+  .section-num{font-family:'JetBrains Mono'; color:var(--amber); font-size:13px;}
+  .section-head h2{font-size:28px;}
+  .lede{color:var(--paper-dim); max-width:680px; margin-bottom:40px; font-size:15.5px;}
+
+  .grid-2{display:grid; grid-template-columns:1fr 1fr; gap:28px;}
+  .grid-3{display:grid; grid-template-columns:repeat(3,1fr); gap:20px;}
+  .grid-5{display:grid; grid-template-columns:repeat(5,1fr); gap:16px;}
+  @media (max-width:900px){ .grid-2,.grid-3,.grid-5{grid-template-columns:1fr;} }
+
+  .card{
+    border:1px solid var(--line-dim); border-radius:var(--radius);
+    background:var(--ink-2); padding:22px;
+  }
+  .card h3{font-size:15px; color:var(--paper); margin-bottom:6px;}
+  .card p{color:var(--slate); font-size:13.5px; margin:0;}
+  .table-card{padding:18px;}
+  .table-card .th{display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;}
+  .table-card .th .mono{font-size:13.5px; color:var(--amber); font-weight:600;}
+  .table-card .pk{font-size:10.5px; color:var(--ink); background:var(--line); padding:2px 6px; border-radius:4px; letter-spacing:0.04em;}
+  .table-card ul{list-style:none; margin:0; padding:0;}
+  .table-card li{font-family:'JetBrains Mono'; font-size:11.5px; color:var(--paper-dim); padding:3px 0; border-top:1px dashed var(--line-dim);}
+  .table-card li:first-child{border-top:none;}
+
+  /* QUERY GALLERY */
+  .qtabs{display:flex; gap:8px; flex-wrap:wrap; margin-bottom:28px;}
+  .qtab{
+    font-family:'JetBrains Mono'; font-size:12.5px; color:var(--slate);
+    border:1px solid var(--line-dim); border-radius:100px; padding:8px 16px;
+    cursor:pointer; background:transparent; transition:all .15s ease;
+  }
+  .qtab.active{color:var(--ink); background:var(--amber); border-color:var(--amber); font-weight:600;}
+  .qpanel{display:none;}
+  .qpanel.active{display:block;}
+  .console{
+    border:1px solid var(--line-dim); border-radius:12px; overflow:hidden;
+    background:#081d33;
+  }
+  .console-bar{display:flex; align-items:center; gap:8px; padding:10px 16px; border-bottom:1px solid var(--line-dim); background:var(--ink-2);}
+  .console-bar .dot{width:9px; height:9px; border-radius:50%;}
+  .console-bar .dot:nth-child(1){background:#FF7A6B;}
+  .console-bar .dot:nth-child(2){background:#FFB703;}
+  .console-bar .dot:nth-child(3){background:#7BE0B0;}
+  .console-bar .fname{margin-left:8px; font-family:'JetBrains Mono'; font-size:12px; color:var(--slate);}
+  pre.sql{margin:0; padding:20px 22px; overflow-x:auto; font-family:'JetBrains Mono'; font-size:12.8px; line-height:1.65; color:#DCE6F0;}
+  .kw{color:#7EC8FF; font-weight:600;}
+  .fn{color:#FFB703;}
+  .str{color:#7BE0B0;}
+  .cm{color:#5B7590; font-style:italic;}
+  .num{color:#F0997B;}
+  .q-note{color:var(--slate); font-size:13px; margin-top:14px; max-width:640px;}
+
+  /* CHALLENGES */
+  .challenge-card{border:1px solid var(--line-dim); border-radius:var(--radius); background:var(--ink-2); padding:26px; display:flex; gap:20px;}
+  .challenge-card .idx{font-family:'JetBrains Mono'; color:var(--amber); font-size:22px; font-weight:700; flex-shrink:0;}
+  .challenge-card h3{font-size:16px; margin-bottom:8px;}
+  .challenge-card .label{font-size:11px; text-transform:uppercase; letter-spacing:0.06em; color:var(--coral); margin-bottom:4px;}
+  .challenge-card .label.fix{color:var(--green);}
+  .challenge-card p{color:var(--paper-dim); font-size:13.8px; margin:0 0 14px;}
+
+  table.compat{width:100%; border-collapse:collapse; margin-top:36px; font-size:13.5px;}
+  table.compat th{text-align:left; font-family:'JetBrains Mono'; color:var(--amber); font-size:11.5px; text-transform:uppercase; letter-spacing:0.05em; padding:10px 14px; border-bottom:1px solid var(--line-dim);}
+  table.compat td{padding:12px 14px; border-bottom:1px solid var(--line-dim); font-family:'JetBrains Mono'; color:var(--paper-dim);}
+  table.compat td.mysql{color:var(--green);}
+
+  /* STACK */
+  .stack-row{display:flex; gap:12px; flex-wrap:wrap;}
+  .stack-pill{border:1px solid var(--line-dim); border-radius:100px; padding:9px 18px; font-family:'JetBrains Mono'; font-size:12.5px; color:var(--line);}
+
+  footer{padding:56px 0 80px; border-top:1px solid var(--line-dim);}
+  footer .foot-row{display:flex; justify-content:space-between; align-items:flex-end; flex-wrap:wrap; gap:24px;}
+  footer h3{font-size:20px; margin-bottom:8px;}
+  footer p{color:var(--slate); font-size:13.5px; margin:0; max-width:420px;}
+  footer .meta{font-family:'JetBrains Mono'; font-size:12px; color:var(--slate); text-align:right;}
+
+  .reveal{opacity:0; transform:translateY(14px); transition:opacity .6s ease, transform .6s ease;}
+  .reveal.in{opacity:1; transform:translateY(0);}
+  @media (prefers-reduced-motion: reduce){
+    .reveal{opacity:1; transform:none; transition:none;}
+    html{scroll-behavior:auto;}
+  }
+  ::selection{background:var(--amber); color:var(--ink);}
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="nav-inner">
+    <div class="brand"><span class="dot"></span>PrimeMart / SQL Warehouse</div>
+    <nav class="links">
+      <a href="#schema">Schema</a>
+      <a href="#queries">Queries</a>
+      <a href="#challenges">Challenges</a>
+      <a href="#stack">Stack</a>
+    </nav>
+  </div>
+</header>
+
+<div class="wrap hero">
+  <span class="eyebrow">MySQL &middot; Star Schema &middot; Data Warehousing</span>
+  <h1>Designing and querying a<br><em>retail sales</em> data warehouse.</h1>
+  <p class="sub">A five-table star schema built for a fictional Nigerian retail chain, PrimeMart — covering schema design, data manipulation, string and date functions, joins, subqueries, and transaction control, all written and debugged in MySQL.</p>
+  <div class="stat-row">
+    <div class="stat-chip"><span class="n">5</span><span class="l">Tables</span></div>
+    <div class="stat-chip"><span class="n">21</span><span class="l">Queries solved</span></div>
+    <div class="stat-chip"><span class="n">6</span><span class="l">Stores across Nigeria</span></div>
+    <div class="stat-chip"><span class="n">1</span><span class="l">Stored procedure</span></div>
+  </div>
+</div>
+
+<div class="wrap schema-block">
+  <div class="schema-frame reveal" id="schema">
+    <div class="schema-caption">
+      <span class="tag">FIG. 01 — STAR SCHEMA</span>
+      <span class="tag">FactSales at center, 4 dimensions</span>
+    </div>
+    <svg class="schema" viewBox="0 0 800 600" xmlns="http://www.w3.org/2000/svg">
+      <line class="rel-line" x1="400" y1="250" x2="400" y2="130"/>
+      <line class="rel-line" x1="300" y1="300" x2="180" y2="300"/>
+      <line class="rel-line" x1="500" y1="300" x2="620" y2="300"/>
+      <line class="rel-line" x1="400" y1="350" x2="400" y2="470"/>
+
+      <rect class="tbl-rect" x="40" y="255" width="200" height="90" rx="8"/>
+      <text class="tbl-name" x="60" y="290">DimCustomer</text>
+      <text class="tbl-sub" x="60" y="312">PK CustomerID</text>
+      <text class="tbl-sub" x="60" y="328">Name, City, State</text>
+
+      <rect class="tbl-rect" x="300" y="40" width="200" height="90" rx="8"/>
+      <text class="tbl-name" x="320" y="75">DimDate</text>
+      <text class="tbl-sub" x="320" y="97">PK DateKey</text>
+      <text class="tbl-sub" x="320" y="113">Day, Month, Quarter</text>
+
+      <rect class="tbl-rect" x="560" y="255" width="200" height="90" rx="8"/>
+      <text class="tbl-name" x="580" y="290">DimProduct</text>
+      <text class="tbl-sub" x="580" y="312">PK ProductID</text>
+      <text class="tbl-sub" x="580" y="328">Category, Price, Stock</text>
+
+      <rect class="tbl-rect" x="300" y="470" width="200" height="90" rx="8"/>
+      <text class="tbl-name" x="320" y="505">DimStore</text>
+      <text class="tbl-sub" x="320" y="527">PK StoreID</text>
+      <text class="tbl-sub" x="320" y="543">City, State, Manager</text>
+
+      <rect class="tbl-rect fact" x="300" y="255" width="200" height="90" rx="8"/>
+      <text class="tbl-name" x="320" y="290">FactSales</text>
+      <text class="tbl-sub" x="320" y="312">PK SalesID &middot; auto_increment</text>
+      <text class="tbl-sub" x="320" y="328">Qty, UnitPrice, Total</text>
+    </svg>
+  </div>
+</div>
+
+<section id="overview">
+  <div class="wrap">
+    <div class="section-head"><span class="section-num">01</span><h2>Overview</h2></div>
+    <div class="grid-2">
+      <p class="lede" style="margin-bottom:0;">The warehouse follows a classic star schema: one central fact table, <span class="mono" style="color:var(--line)">FactSales</span>, holding every transaction line, surrounded by four dimension tables — customer, product, store, and a calendar reference table — joined by foreign keys. It's the same pattern used in real BI stacks to keep reporting queries fast and joins predictable.</p>
+      <p class="lede" style="margin-bottom:0;">On top of the schema sit 21 tasks spanning the full SQL toolkit an analyst needs day to day: updates and conditional deletes, string and date functions, revenue rollups through joins, correlated and non-correlated subqueries, and transaction control — commits, rollbacks, and savepoints — including a stored procedure with error handling.</p>
+    </div>
+  </div>
+</section>
+
+<section id="queries">
+  <div class="wrap">
+    <div class="section-head"><span class="section-num">02</span><h2>Query gallery</h2></div>
+    <p class="lede">Six categories of work, pulled straight from the project file. Each panel shows one representative query.</p>
+
+    <div class="qtabs">
+      <button class="qtab active" data-tab="ddl">Schema (DDL)</button>
+      <button class="qtab" data-tab="dml">Data manipulation</button>
+      <button class="qtab" data-tab="func">String &amp; date functions</button>
+      <button class="qtab" data-tab="join">Joins &amp; aggregation</button>
+      <button class="qtab" data-tab="sub">Subqueries</button>
+      <button class="qtab" data-tab="txn">Transactions</button>
+    </div>
+
+    <div class="qpanel active" data-panel="ddl">
+      <div class="console"><div class="console-bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="fname">fact_sales.sql</span></div>
+      <pre class="sql"><span class="cm">-- FactSales: central transactional fact table</span>
+<span class="kw">CREATE TABLE</span> FactSales (
+    SalesID       <span class="fn">INT</span>         auto_increment    <span class="kw">PRIMARY KEY</span>,
+    DateKey       <span class="fn">INT</span>             <span class="kw">NOT NULL</span>,
+    CustomerID    <span class="fn">INT</span>             <span class="kw">NOT NULL</span>,
+    ProductID     <span class="fn">INT</span>             <span class="kw">NOT NULL</span>,
+    StoreID       <span class="fn">INT</span>             <span class="kw">NOT NULL</span>,
+    QuantitySold  <span class="fn">INT</span>             <span class="kw">NOT NULL</span>,
+    UnitPrice     <span class="fn">DECIMAL</span>(<span class="num">10</span>,<span class="num">2</span>)   <span class="kw">NOT NULL</span>,
+    TotalAmount   <span class="fn">DECIMAL</span>(<span class="num">10</span>,<span class="num">2</span>)   <span class="kw">NOT NULL</span>,
+    PaymentMethod <span class="fn">VARCHAR</span>(<span class="num">30</span>),
+    <span class="kw">CONSTRAINT</span> FK_Date     <span class="kw">FOREIGN KEY</span> (DateKey)    <span class="kw">REFERENCES</span> DimDate(DateKey),
+    <span class="kw">CONSTRAINT</span> FK_Customer <span class="kw">FOREIGN KEY</span> (CustomerID) <span class="kw">REFERENCES</span> DimCustomer(CustomerID),
+    <span class="kw">CONSTRAINT</span> FK_Product  <span class="kw">FOREIGN KEY</span> (ProductID)  <span class="kw">REFERENCES</span> DimProduct(ProductID),
+    <span class="kw">CONSTRAINT</span> FK_Store    <span class="kw">FOREIGN KEY</span> (StoreID)    <span class="kw">REFERENCES</span> DimStore(StoreID)
+);</pre></div>
+      <p class="q-note">The fact table sits at the center of the star, referencing all four dimensions through foreign keys.</p>
+    </div>
+
+    <div class="qpanel" data-panel="dml">
+      <div class="console"><div class="console-bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="fname">q3_delete_inactive_customer.sql</span></div>
+      <pre class="sql"><span class="cm">-- Q3: Delete an inactive customer record</span>
+<span class="kw">DELETE FROM</span> DimCustomer
+<span class="kw">WHERE</span> CustomerID = <span class="num">4023</span>
+<span class="kw">AND NOT EXISTS</span> (
+    <span class="kw">SELECT</span> <span class="num">1</span>
+    <span class="kw">FROM</span> FactSales s
+    <span class="kw">WHERE</span> s.CustomerID = DimCustomer.CustomerID
+);</pre></div>
+      <p class="q-note">Only removes the customer if they have zero linked sales — a safety check against orphaning fact rows.</p>
+    </div>
+
+    <div class="qpanel" data-panel="func">
+      <div class="console"><div class="console-bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="fname">q5_sales_date_functions.sql</span></div>
+      <pre class="sql"><span class="cm">-- Q5: Sales date functions</span>
+<span class="kw">SELECT</span>
+    <span class="fn">YEAR</span>(d.FullDate)      <span class="kw">AS</span> SaleYear,
+    <span class="fn">MONTH</span>(d.FullDate)     <span class="kw">AS</span> MonthNumber,
+    <span class="fn">MONTHNAME</span>(d.FullDate) <span class="kw">AS</span> MonthName,
+    <span class="fn">DATEDIFF</span>(<span class="fn">CURDATE</span>(), d.FullDate) <span class="kw">AS</span> DaysSinceSale
+<span class="kw">FROM</span> FactSales s
+<span class="kw">JOIN</span> DimDate d
+    <span class="kw">ON</span> s.DateKey = d.DateKey;</pre></div>
+      <p class="q-note">Also covers string work — <span class="mono">UPPER()</span>, <span class="mono">LEFT()</span>, <span class="mono">RIGHT()</span>, <span class="mono">LENGTH()</span> — on customer names in Q4.</p>
+    </div>
+
+    <div class="qpanel" data-panel="join">
+      <div class="console"><div class="console-bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="fname">q7_monthly_sales.sql</span></div>
+      <pre class="sql"><span class="cm">-- Q7: Monthly sales via join</span>
+<span class="kw">SELECT</span>
+    d.YearNumber  <span class="kw">AS</span> SalesYear,
+    d.MonthNumber <span class="kw">AS</span> SalesMonth,
+    d.MonthName   <span class="kw">AS</span> MonthName,
+    <span class="fn">SUM</span>(s.TotalAmount) <span class="kw">AS</span> TotalSales
+<span class="kw">FROM</span> FactSales s
+<span class="kw">JOIN</span> DimDate d
+    <span class="kw">ON</span> s.DateKey = d.DateKey
+<span class="kw">GROUP BY</span>
+    d.YearNumber, d.MonthNumber, d.MonthName
+<span class="kw">ORDER BY</span>
+    d.YearNumber, d.MonthNumber;</pre></div>
+      <p class="q-note">The same pattern powers per-store and per-product revenue rankings (Q6, Q9, Q12).</p>
+    </div>
+
+    <div class="qpanel" data-panel="sub">
+      <div class="console"><div class="console-bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="fname">q14_top_product_subquery.sql</span></div>
+      <pre class="sql"><span class="cm">-- Q14: Product with the highest total revenue, via subquery</span>
+<span class="kw">SELECT</span>
+    p.ProductName <span class="kw">AS</span> ProductName,
+    <span class="fn">SUM</span>(s.TotalAmount) <span class="kw">AS</span> TotalRevenue
+<span class="kw">FROM</span> FactSales s
+<span class="kw">JOIN</span> DimProduct p
+    <span class="kw">ON</span> s.ProductID = p.ProductID
+<span class="kw">WHERE</span> s.ProductID = (
+    <span class="kw">SELECT</span> ProductID
+    <span class="kw">FROM</span> FactSales
+    <span class="kw">GROUP BY</span> ProductID
+    <span class="kw">ORDER BY</span> <span class="fn">SUM</span>(TotalAmount) <span class="kw">DESC</span>
+    <span class="kw">LIMIT</span> <span class="num">1</span>
+)
+<span class="kw">GROUP BY</span> p.ProductName;</pre></div>
+      <p class="q-note">Q15 pairs this with a correlated subquery, counting each store's transactions inline against <span class="mono" style="color:var(--line)">DimStore</span>.</p>
+    </div>
+
+    <div class="qpanel" data-panel="txn">
+      <div class="console"><div class="console-bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="fname">q19_savepoint_rollback.sql</span></div>
+      <pre class="sql"><span class="cm">-- Q19: Partial rollback using a savepoint</span>
+<span class="kw">START TRANSACTION</span>;
+
+<span class="kw">DELETE FROM</span> DimStore <span class="kw">WHERE</span> StoreName = <span class="str">'Store A'</span>;
+
+<span class="kw">SAVEPOINT</span> mySavepoint;
+
+<span class="kw">DELETE FROM</span> DimStore <span class="kw">WHERE</span> StoreName = <span class="str">'Store B'</span>;
+
+<span class="cm">-- undo only the Store B deletion</span>
+<span class="kw">ROLLBACK TO SAVEPOINT</span> mySavepoint;
+
+<span class="kw">COMMIT</span>;</pre></div>
+      <p class="q-note">Q17 rolls back a full price update; Q18 wraps an insert pair in a stored procedure with an exit handler that rolls back on any SQL exception.</p>
+    </div>
+  </div>
+</section>
+
+<section id="challenges">
+  <div class="wrap">
+    <div class="section-head"><span class="section-num">03</span><h2>Challenges &amp; fixes</h2></div>
+    <p class="lede">Two problems came up during the build, both documented as part of the project write-up.</p>
+    <div class="grid-2">
+      <div class="challenge-card reveal">
+        <span class="idx">01</span>
+        <div>
+          <div class="label">Problem</div>
+          <h3>Primary key without auto-increment</h3>
+          <p>FactSales' primary key wasn't originally defined with <span class="mono" style="color:var(--line)">AUTO_INCREMENT</span>, so unique transaction IDs weren't generated automatically.</p>
+          <div class="label fix">Fix</div>
+          <p style="margin:0;">Altered the table structure to add <span class="mono" style="color:var(--line)">AUTO_INCREMENT</span> on SalesID.</p>
+        </div>
+      </div>
+      <div class="challenge-card reveal">
+        <span class="idx">02</span>
+        <div>
+          <div class="label">Problem</div>
+          <h3>SQL Server syntax in a MySQL project</h3>
+          <p>The task hints were written in SQL Server syntax, which isn't compatible with MySQL — several keywords and functions needed translating.</p>
+          <div class="label fix">Fix</div>
+          <p style="margin:0;">Swapped each SQL Server construct for its MySQL equivalent, shown below.</p>
+        </div>
+      </div>
+    </div>
+
+    <table class="compat">
+      <tr><th>SQL Server</th><th>MySQL equivalent</th></tr>
+      <tr><td>LEN()</td><td class="mysql">LENGTH() / CHAR_LENGTH()</td></tr>
+      <tr><td>TOP</td><td class="mysql">LIMIT</td></tr>
+      <tr><td>BEGIN</td><td class="mysql">START TRANSACTION</td></tr>
+      <tr><td>GETDATE()</td><td class="mysql">CURDATE() / NOW()</td></tr>
+      <tr><td>TRY...CATCH</td><td class="mysql">DECLARE EXIT HANDLER FOR SQLEXCEPTION</td></tr>
+    </table>
+  </div>
+</section>
+
+<section id="stack">
+  <div class="wrap">
+    <div class="section-head"><span class="section-num">04</span><h2>Tools &amp; techniques</h2></div>
+    <div class="stack-row">
+      <span class="stack-pill">MySQL</span>
+      <span class="stack-pill">Star schema design</span>
+      <span class="stack-pill">DDL / DML</span>
+      <span class="stack-pill">Joins &amp; aggregation</span>
+      <span class="stack-pill">Correlated subqueries</span>
+      <span class="stack-pill">Transactions &amp; savepoints</span>
+      <span class="stack-pill">Stored procedures</span>
+      <span class="stack-pill">Error handling</span>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap foot-row">
+    <div>
+      <h3>PrimeMart Sales Data Warehouse</h3>
+      <p>A SQL portfolio project covering schema design, querying, and transaction control in MySQL.</p>
+    </div>
+    <div class="meta">
+      Built by Abdulrahman<br>
+      <a href="#" style="color:var(--slate);">github.com/your-username</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+  document.querySelectorAll('.qtab').forEach(function(tab){
+    tab.addEventListener('click', function(){
+      var target = tab.getAttribute('data-tab');
+      document.querySelectorAll('.qtab').forEach(function(t){t.classList.remove('active');});
+      document.querySelectorAll('.qpanel').forEach(function(p){p.classList.remove('active');});
+      tab.classList.add('active');
+      document.querySelector('.qpanel[data-panel="'+target+'"]').classList.add('active');
+    });
+  });
+
+  var reveals = document.querySelectorAll('.reveal');
+  if('IntersectionObserver' in window){
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); }
+      });
+    }, {threshold:0.15});
+    reveals.forEach(function(el){ io.observe(el); });
+  } else {
+    reveals.forEach(function(el){ el.classList.add('in'); });
+  }
+</script>
+
+</body>
+</html>
