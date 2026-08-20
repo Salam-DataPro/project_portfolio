@@ -21,6 +21,381 @@
 
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
   <script src="https://unpkg.com/typed.js@2.0.16/dist/typed.umd.js"></script>
+
+<style>
+/* =========================
+   MOBILE RESPONSIVE OVERRIDES
+   ========================= */
+
+/* Prevent horizontal scrolling on small screens */
+html, body {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+img, canvas, video {
+  max-width: 100%;
+}
+
+body {
+  -webkit-text-size-adjust: 100%;
+}
+
+/* Navigation */
+.glass-nav {
+  width: 100%;
+}
+
+.glass-nav .container-fluid {
+  padding-left: 1rem !important;
+  padding-right: 1rem !important;
+}
+
+.brand-text {
+  font-size: 1.25rem !important;
+  white-space: nowrap;
+}
+
+.nav-menu {
+  display: none;
+  border: 0;
+  background: transparent;
+  font-size: 1.8rem;
+  line-height: 1;
+  padding: .25rem .5rem;
+  margin-left: auto;
+}
+
+@media (max-width: 767.98px) {
+  .nav-menu {
+    display: block;
+  }
+
+  .navbar-collapse {
+    margin-top: .75rem;
+    padding: .75rem 0 1rem;
+    border-radius: 12px;
+  }
+
+  .navbar-nav {
+    gap: .15rem !important;
+  }
+
+  .navbar-nav .nav-link {
+    padding: .65rem .5rem;
+    text-align: center;
+  }
+
+  /* Make sure the mobile menu has enough contrast */
+  .navbar-collapse.show,
+  .navbar-collapse.collapsing {
+    background: rgba(255,255,255,.96);
+    box-shadow: 0 10px 30px rgba(0,0,0,.08);
+  }
+
+  /* Hero */
+  .home {
+    min-height: auto !important;
+    padding: 110px 0 60px;
+  }
+
+  .home .container {
+    width: 100%;
+  }
+
+  .hero-title {
+    font-size: clamp(2rem, 9vw, 3rem) !important;
+    line-height: 1.15;
+    overflow-wrap: anywhere;
+  }
+
+  .hero-title br {
+    display: none;
+  }
+
+  .home h3 {
+    font-size: clamp(1.25rem, 5vw, 1.7rem) !important;
+  }
+
+  .hero-desc {
+    font-size: .98rem;
+    line-height: 1.65;
+    padding: 0 .25rem;
+  }
+
+  /* Counters */
+  .counter-wrapper {
+    margin-top: 2rem !important;
+    padding: .75rem !important;
+  }
+
+  .counter-wrapper > div {
+    padding: .4rem .25rem;
+  }
+
+  .counter-value {
+    font-size: 1.45rem;
+    margin-bottom: .25rem;
+  }
+
+  .counter-wrapper small {
+    display: block;
+    font-size: .62rem;
+    line-height: 1.25;
+  }
+
+  /* Hero buttons */
+  .home .d-flex.gap-3 {
+    flex-direction: column;
+    align-items: stretch !important;
+    gap: .75rem !important;
+  }
+
+  .home .d-flex.gap-3 a,
+  .home .mt-4 a {
+    width: 100%;
+    text-align: center;
+  }
+
+  /* General sections */
+  .section-padding {
+    padding-top: 60px !important;
+    padding-bottom: 60px !important;
+  }
+
+  .section-header h2,
+  .section-title {
+    font-size: 1.8rem;
+  }
+
+  .sub-title {
+    font-size: .85rem;
+  }
+
+  /* Service cards */
+  .service-card,
+  .skill-card,
+  .project-card,
+  .certifications .glass-card,
+  .contact .glass-card {
+    width: 100%;
+  }
+
+  .service-card {
+    padding: 1.25rem !important;
+  }
+
+  /* Skills */
+  .skill .row.g-4 {
+    --bs-gutter-x: .9rem;
+    --bs-gutter-y: .9rem;
+  }
+
+  .skill-card {
+    padding: .9rem !important;
+  }
+
+  .circular-progress {
+    transform: scale(.9);
+  }
+
+  .skill-card p {
+    font-size: .88rem;
+    line-height: 1.35;
+  }
+
+  .skill .col-lg-6.mt-5 {
+    margin-top: 2.5rem !important;
+  }
+
+  .skill h2 {
+    font-size: 1.8rem;
+    line-height: 1.25;
+  }
+
+  /* Portfolio filter */
+  #myBtnContainer {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: .5rem;
+    padding: 0 .5rem;
+  }
+
+  .filter-item {
+    margin: 0 !important;
+    padding: .45rem .8rem;
+    font-size: .85rem;
+  }
+
+  .project-card .card-body {
+    padding: 1.1rem !important;
+  }
+
+  .project-card h5 {
+    font-size: 1.05rem;
+    line-height: 1.35;
+  }
+
+  .project-card p {
+    font-size: .9rem;
+    line-height: 1.55;
+  }
+
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .35rem;
+  }
+
+  .tags .badge {
+    white-space: normal;
+  }
+
+  .card-img-wrapper {
+    overflow: hidden;
+  }
+
+  .card-img-top {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+  }
+
+  /* Certifications */
+  .certifications .glass-card {
+    padding: 1rem !important;
+  }
+
+  .certifications .glass-card img {
+    width: 100%;
+    max-height: 190px !important;
+    object-fit: cover !important;
+  }
+
+  /* Contact */
+  .contact .glass-card {
+    padding: 1.5rem !important;
+  }
+
+  .contact h2 {
+    font-size: 1.65rem;
+    line-height: 1.3;
+  }
+
+  .social-icons {
+    gap: 1.5rem !important;
+  }
+
+  .contact form .c-btn {
+    width: 100%;
+  }
+
+  .glass-input {
+    min-height: 48px;
+  }
+
+  textarea.glass-input {
+    min-height: 120px;
+  }
+
+  /* Back-to-top button */
+  #btn-back-to-top {
+    right: 15px !important;
+    bottom: 15px !important;
+  }
+}
+
+/* Extra-small phones */
+@media (max-width: 420px) {
+  .glass-nav .container-fluid {
+    padding-left: .75rem !important;
+    padding-right: .75rem !important;
+  }
+
+  .brand-text {
+    font-size: 1.05rem !important;
+  }
+
+  .home {
+    padding-top: 100px;
+  }
+
+  .hero-title {
+    font-size: 1.9rem !important;
+  }
+
+  .counter-wrapper {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+
+  .counter-value {
+    font-size: 1.25rem;
+  }
+
+  .counter-wrapper small {
+    font-size: .55rem;
+  }
+
+  .skill .col-6 {
+    width: 50%;
+  }
+
+  .circular-progress {
+    transform: scale(.78);
+    transform-origin: center;
+  }
+
+  .skill-card p {
+    font-size: .78rem;
+  }
+
+  .section-header h2,
+  .section-title {
+    font-size: 1.55rem;
+  }
+
+  .contact .glass-card {
+    padding: 1.1rem !important;
+  }
+}
+
+/* Tablet adjustments */
+@media (min-width: 768px) and (max-width: 991.98px) {
+  .home {
+    padding-top: 120px;
+    padding-bottom: 70px;
+  }
+
+  .hero-title {
+    font-size: clamp(2.5rem, 5vw, 3.5rem);
+  }
+
+  .home .hero-desc {
+    max-width: 700px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .counter-wrapper small {
+    font-size: .7rem;
+  }
+}
+
+/* Improve touch targets */
+@media (max-width: 991.98px) {
+  .nav-link,
+  .c-btn,
+  .c-btn-outline,
+  .filter-item,
+  button {
+    min-height: 44px;
+  }
+}
+</style>
+
 </head>
 
 <body>
