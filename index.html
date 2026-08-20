@@ -73,16 +73,16 @@
 
           <div class="row mt-5 mb-4 counter-wrapper glass-panel p-3">
             <div class="col-4 text-center border-end border-light">
-              <h2 class="fw-bold counter-value" data-target="7">0</h2>
+              <h2 class="fw-bold counter-value" data-target="10">0</h2>
               <small class="text-uppercase fw-bold text-muted">End-to-End Projects</small>
             </div>
             <div class="col-4 text-center border-end border-light">
-              <h2 class="fw-bold counter-value" data-target="3">0</h2>
+              <h2 class="fw-bold counter-value" data-target="10">0</h2>
               <small class="text-uppercase fw-bold text-muted">Dashboards Built</small>
             </div>
             <div class="col-4 text-center">
               <h2 class="fw-bold counter-value" data-target="857" data-decimal="true">0</h2>
-              <small class="text-uppercase fw-bold text-muted">Model AUC (x.xxx)</small>
+              <small class="text-uppercase fw-bold text-muted">Model AUC</small>
             </div>
           </div>
 
@@ -101,7 +101,7 @@
 
         <div class="col-lg-5 d-none d-lg-block text-center" data-aos="fade-left">
           <div class="hero-img-container">
-            <img src="images/hero-placeholder.png" class="img-fluid floating-anim" alt="Data Analytics" />
+            <img src="images/image.png" class="img-fluid floating-anim" alt="Data Analytics" />
             <div class="floating-badge badge-1 glass-card">
               <i class="bi bi-graph-up-arrow text-success"></i> Model-Driven Insight
             </div>
@@ -251,11 +251,10 @@
               </div>
               <h5 class="fw-bold">HR Attrition &amp; Workforce Analytics</h5>
               <p class="text-small text-muted">
-                Built a logistic regression model to flag attrition risk (AUC 0.81–0.857,
-                fitted in Excel with Solver and validated in Python), then extended the
-                analysis across 7 HR problems — cost of turnover, compensation fairness,
-                promotion bottlenecks, overtime burnout, and manager quality signal —
-                backed by 3 interactive dashboards: Payment, Attrition, and Performance.
+                Built a logistic regression model (AUC up to 0.857) to predict
+                attrition risk, then dug into 7 HR pain points — turnover cost,
+                pay equity, promotion bottlenecks, burnout, and manager quality —
+                across 3 interactive dashboards.
               </p>
             </div>
           </div>
@@ -280,15 +279,10 @@
               </div>
               <h5 class="fw-bold"><a href="project-sql-warehouse.html" target="_blank" class="text-decoration-none text-reset">Retail Sales Data Warehouse — SQL</a></h5>
               <p class="text-small text-muted">
-                Designed a star-schema retail sales database (FactSales plus DimDate,
-                DimCustomer, DimProduct, and DimStore) in MySQL, then answered 20+
-                business questions through joins, subqueries, correlated subqueries,
-                and aggregations covering revenue by store/product/month, customer
-                segmentation, and loyalty eligibility. Also implemented transaction
-                control with COMMIT, ROLLBACK, and SAVEPOINT, and a stored procedure
-                with exception handling to safely insert linked customer and sales
-                records — translating SQL Server syntax to MySQL-compliant equivalents
-                along the way.
+                Designed a MySQL star-schema warehouse and solved 20+ business
+                questions with joins, subqueries, and aggregations — revenue
+                trends, customer segments, loyalty eligibility — plus transaction
+                control and a stored procedure with error handling.
               </p>
             </div>
           </div>
@@ -311,20 +305,34 @@
       </div>
 
       <div class="row g-4 justify-content-center">
-        <!-- Duplicate this card for each certificate -->
+
         <div class="col-md-6 col-lg-4" data-aos="fade-up">
           <div class="glass-card p-4 h-100 text-center">
-            <img src="images/cert-placeholder.png" class="img-fluid mb-3" style="max-height:100px;" alt="Certificate">
-            <h5 class="fw-bold">Certificate Name</h5>
-            <p class="text-muted mb-1">Issuing Body</p>
-            <small class="text-muted">Year</small>
-            <div class="mt-3">
-              <a href="#" target="_blank" class="text-decoration-none">
-                View Credential <i class="bi bi-box-arrow-up-right"></i>
-              </a>
-            </div>
+            <img src="images/cert-intro-sql.jpg" class="img-fluid mb-3 rounded" style="max-height:160px; object-fit:cover;" alt="Introduction to SQL certificate">
+            <h5 class="fw-bold">Introduction to SQL</h5>
+            <p class="text-muted mb-1">DataCamp</p>
+            <small class="text-muted">Sep 2025</small>
           </div>
         </div>
+
+        <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="100">
+          <div class="glass-card p-4 h-100 text-center">
+            <img src="images/cert-intermediate-sql.jpg" class="img-fluid mb-3 rounded" style="max-height:160px; object-fit:cover;" alt="Intermediate SQL certificate">
+            <h5 class="fw-bold">Intermediate SQL</h5>
+            <p class="text-muted mb-1">DataCamp</p>
+            <small class="text-muted">Oct 2025</small>
+          </div>
+        </div>
+
+        <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="200">
+          <div class="glass-card p-4 h-100 text-center">
+            <img src="images/cert-data-analytics-essentials.jpg" class="img-fluid mb-3 rounded" style="max-height:160px; object-fit:cover;" alt="Data Analytics Essentials certificate">
+            <h5 class="fw-bold">Data Analytics Essentials</h5>
+            <p class="text-muted mb-1">Cisco Networking Academy</p>
+            <small class="text-muted">Aug 2025</small>
+          </div>
+        </div>
+
       </div>
     </div>
   </section>
@@ -346,7 +354,7 @@
               <a href="mailto:your.email@example.com"><i class="bi bi-envelope-at-fill"></i></a>
             </div>
 
-            <form action="https://formspree.io/f/your-form-id" method="POST" class="text-start">
+            <form action="https://formspree.io/f/xdenbeon" method="POST" class="text-start">
               <div class="row g-3">
                 <div class="col-md-6">
                   <input type="text" name="name" class="form-control glass-input" placeholder="Your Name" required>
